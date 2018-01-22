@@ -15,6 +15,8 @@ import urllib.parse
 #命令行颜色包
 from colorama import init,Fore
 import sys
+from threading import Thread
+from common import methods
 init()
 
 
@@ -137,6 +139,13 @@ def count_base(question,choices):
                 print()
                 print('请注意此题为肯定题，建议选择：', Fore.RED + max(dic, key=dic.get) + Fore.RESET)
 
+def run_algorithm(al_num, question, choices):
+    if al_num == 0:
+        open_webbrowser(question)
+    elif al_num == 1:
+        open_webbrowser_count(question, choices)
+    elif al_num == 2:
+        count_base(question, choices)
 
 def game_fun(image_cut):
     while True:
@@ -147,7 +156,15 @@ def game_fun(image_cut):
         c_filePath = "choices.png"
         question = question_words(q_filePath,options)
         choices = choices_words(c_filePath,options)
-        count_base(question, choices)
+        #count_base(question, choices)
+
+        # 多线程
+        m1 = Thread(methods.run_algorithm(0, question, choices))
+        m2 = Thread(methods.run_algorithm(1, question, choices))
+        m3 = Thread(methods.run_algorithm(2, question, choices))
+        m1.start()
+        m2.start()
+        m3.start()
 
         print('——————————————————————————')
         go = input('输入回车继续运行,输入 n 回车结束运行: ')
